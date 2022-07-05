@@ -5,7 +5,7 @@ require('dotenv').config();
 const mariadb = require('mariadb');
 const pool = mariadb.createPool({
      host: 'demez.asuscomm.com', 
-     user:'silo', 
+     user: process.env.MARIADB_USER, 
      password: process.env.MARIADB_PW,
      connectionLimit: 5
 });

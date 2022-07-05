@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const db = require('./db');
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 async function startserver(){
     app.listen(port, () => {
