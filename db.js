@@ -7,15 +7,14 @@ const pool = mariadb.createPool({
      host: 'demez.asuscomm.com', 
      user: process.env.MARIADB_USER, 
      password: process.env.MARIADB_PW,
-     connectionLimit: 5
+     connectionLimit: 5,
+     database: 'training_diary'
 });
 
 // connect()
 async function connect() {
     try {
         await pool.getConnection();
-        // select default db
-        await pool.query('USE training_diary');
     } catch (err) {
         console.log(err);
     }
