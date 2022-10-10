@@ -5,6 +5,10 @@ const app = express();
 const db = require("./db");
 const bcrypt = require("bcryptjs");
 app.use(express.json());    //middleware to read req.body.<params>
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const port = process.env.PORT || 3000;
 
