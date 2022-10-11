@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 const db = require("./db");
 const bcrypt = require("bcryptjs");
-app.use(express.json());    //middleware to read req.body.<params>
+app.use(express.json()); //middleware to read req.body.<params>
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -19,7 +19,7 @@ async function startserver() {
   });
 }
 
-// Dev function 
+// Dev function
 app.get("/api", async (req, res) => {
   let re = await db.querydb("SELECT * FROM Activity");
   res.send(re);
@@ -89,45 +89,92 @@ app.post("/login", async (req, res) => {
   });
 }); //end of app.post()
 
+
+function timeToDecimal(t) {
+  var arr = t.split(':');
+  var dec = parseInt((arr[1]/6)*10, 10);
+
+  return parseFloat(parseInt(arr[0], 10) + '.' + (dec<10?'0':'') + dec);
+} 
+
 // create a new activity
 app.post("/createActivity", async (req, res) => {
-  res.send(
-    await db.querydb(
-      "INSERT INTO Activity (activity_name, activity_description, duration, start_time, athlete_id, distance, sport_id, elevation, avg_velocity) VALUES (?, ?, ?, ?)",
-      [
-        req.body.name,
-        req.body.description,
-        req.body.duration,
-        req.body.start_time,
-        req.body.athlete_id,
-        req.body.distance,
-        req.body.sport_id,
-        req.body.elevation,
-        req.body.avg_velocity,
-      ]
-    )
-  );
+  let avg_velocity = req.body.distance / timeToDecimal(req.body.duration);
+  console.log("Avg_velocity: " + avg_velocity);
+  // avg_velocity = ""
+
+  // enter query params
+  let query = `
+    INSERT INTO Activity (activity_name, activity_description, duration, start_time, athlete_id, distance, sport_id, elevation, avg_velocity, L1, L2, L3, L4, L5, core, arms, legs, agility, technique) 
+    VALUES (
+        '${req.body.activity_name}',
+        NULLIF('${req.body.activity_description}', 'undefined'),
+        '${req.body.duration}',
+        '${req.body.date + " " + req.body.start_time}',
+        '${req.body.athlete_id}',
+        NULLIF('${req.body.distance}', 'undefined'),
+        '${req.body.sport_id}',
+        NULLIF('${req.body.elevation}', 'undefined'),
+        NULLIF('${avg_velocity}', 'undefined'),
+        NULLIF('${req.body.L1}', 'undefined'),
+        NULLIF('${req.body.L2}', 'undefined'),
+        NULLIF('${req.body.L3}', 'undefined'),
+        NULLIF('${req.body.L4}', 'undefined'),
+        NULLIF('${req.body.L5}', 'undefined'),
+        NULLIF('${req.body.core}', 'undefined'),
+        NULLIF('${req.body.arms}', 'undefined'),
+        NULLIF('${req.body.legs}', 'undefined'),
+        NULLIF('${req.body.agility}', 'undefined'),
+        NULLIF('${req.body.techique}', 'undefined')
+    )`;
+
+  console.log(query);
+    
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    console.log(result);
+    res.sendStatus(201);
+  });
 });
 
 // update an activity
 app.post("/updateActivity", async (req, res) => {
-  res.send(
-    await db.querydb(
-      "UPDATE Activity SET activity_name = ?, activity_description = ?, duration = ?, start_time = ?, athlete_id = ?, distance = ?, sport_id = ?, elevation = ?, avg_velocity = ? WHERE activity_id = ?",
-      [
-        req.body.name,
-        req.body.description,
-        req.body.duration,
-        req.body.start_time,
-        req.body.athlete_id,
-        req.body.distance,
-        req.body.sport_id,
-        req.body.elevation,
-        req.body.avg_velocity,
-        req.body.activity_id,
-      ]
-    )
-  );
+    let avg_velocity = req.body.distance / timeToDecimal(req.body.duration);
+  console.log("Avg_velocity: " + avg_velocity);
+  // avg_velocity = ""
+
+  // enter query params
+  let query = `
+    INSERT INTO Activity (activity_name, activity_description, duration, start_time, athlete_id, distance, sport_id, elevation, avg_velocity, L1, L2, L3, L4, L5, core, arms, legs, agility, technique) 
+    VALUES (
+        '${req.body.activity_name}',
+        NULLIF('${req.body.activity_description}', 'undefined'),
+        '${req.body.duration}',
+        '${req.body.date + " " + req.body.start_time}',
+        '${req.body.athlete_id}',
+        NULLIF('${req.body.distance}', 'undefined'),
+        '${req.body.sport_id}',
+        NULLIF('${req.body.elevation}', 'undefined'),
+        NULLIF('${avg_velocity}', 'undefined'),
+        NULLIF('${req.body.L1}', 'undefined'),
+        NULLIF('${req.body.L2}', 'undefined'),
+        NULLIF('${req.body.L3}', 'undefined'),
+        NULLIF('${req.body.L4}', 'undefined'),
+        NULLIF('${req.body.L5}', 'undefined'),
+        NULLIF('${req.body.core}', 'undefined'),
+        NULLIF('${req.body.arms}', 'undefined'),
+        NULLIF('${req.body.legs}', 'undefined'),
+        NULLIF('${req.body.agility}', 'undefined'),
+        NULLIF('${req.body.techique}', 'undefined')
+    )`;
+
+  console.log(query);
+    
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    console.log(result);
+    res.sendStatus(201);
+  });
 });
 
 // delete an activity
