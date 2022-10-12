@@ -174,11 +174,19 @@ app.post("/updateActivity", async (req, res) => {
 
 // delete an activity
 app.post("/deleteActivity", async (req, res) => {
-  res.send(
-    await db.querydb("DELETE FROM Activity WHERE activity_id = ?", [
-      req.body.activity_id,
-    ])
-  );
+
+  // delete an activity
+  let query = `DELETE FROM Activity WHERE activity_id=${req.body.activity_id}`;
+
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (result.affectedRows == 0) {
+      res.send("No activity deleted");
+    }else{
+      console.log(result);
+      res.send("Activity deleted successfully");
+    }
+  });
 });
 
 // get activity by id
