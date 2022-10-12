@@ -132,48 +132,43 @@ app.post("/createActivity", async (req, res) => {
     
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
-    console.log(result);
-    res.sendStatus(201);
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.sendStatus(201);
+    }
   });
 });
 
 // update an activity
 app.post("/updateActivity", async (req, res) => {
-    let avg_velocity = req.body.distance / timeToDecimal(req.body.duration);
-  console.log("Avg_velocity: " + avg_velocity);
-  // avg_velocity = ""
+  console.log("Distance: " + req.body.distance);
+  console.log("Duration: " + req.body.duration);
+  if(req.body.distance != undefined || req.body.duration != undefined){
+    req.body.avg_velocity = req.body.distance / timeToDecimal(req.body.duration);
+    console.log("Avg_velocity: " + avg_velocity);
+  }
+
+  // log field
+  console.log("Field: " + req.body.field);
+  console.log("Value: " + req.body.value);
+  console.log("Type: " + req.body.type);
+  console.log("id_value: " + req.body.id_value);
 
   // enter query params
-  let query = `
-    INSERT INTO Activity (activity_name, activity_description, duration, start_time, athlete_id, distance, sport_id, elevation, avg_velocity, L1, L2, L3, L4, L5, core, arms, legs, agility, technique) 
-    VALUES (
-        '${req.body.activity_name}',
-        NULLIF('${req.body.activity_description}', 'undefined'),
-        '${req.body.duration}',
-        '${req.body.date + " " + req.body.start_time}',
-        '${req.body.athlete_id}',
-        NULLIF('${req.body.distance}', 'undefined'),
-        '${req.body.sport_id}',
-        NULLIF('${req.body.elevation}', 'undefined'),
-        NULLIF('${avg_velocity}', 'undefined'),
-        NULLIF('${req.body.L1}', 'undefined'),
-        NULLIF('${req.body.L2}', 'undefined'),
-        NULLIF('${req.body.L3}', 'undefined'),
-        NULLIF('${req.body.L4}', 'undefined'),
-        NULLIF('${req.body.L5}', 'undefined'),
-        NULLIF('${req.body.core}', 'undefined'),
-        NULLIF('${req.body.arms}', 'undefined'),
-        NULLIF('${req.body.legs}', 'undefined'),
-        NULLIF('${req.body.agility}', 'undefined'),
-        NULLIF('${req.body.techique}', 'undefined')
-    )`;
+  let query = `UPDATE ${req.body.table} SET ${req.body.field} = '${req.body.value}' WHERE ${req.body.id_type} = ${req.body.id_value}`;
 
   console.log(query);
     
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
-    console.log(result);
-    res.sendStatus(201);
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.sendStatus(201);
+    }
   });
 });
 
