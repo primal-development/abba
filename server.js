@@ -91,8 +91,8 @@ app.post("/login", async (req, res) => {
 
 
 function timeToDecimal(t) {
-  var arr = t.split(':');
-  var dec = parseInt((arr[1]/6)*10, 10);
+  let arr = t.split(':');
+  let dec = parseInt((arr[1]/6)*10, 10);
 
   return parseFloat(parseInt(arr[0], 10) + '.' + (dec<10?'0':'') + dec);
 } 
@@ -191,30 +191,51 @@ app.post("/deleteActivity", async (req, res) => {
 
 // get activity by id
 app.post("/getActivityById", async (req, res) => {
-  res.send(
-    await db.querydb("SELECT * FROM Activity WHERE activity_id = ?", [
-      req.body.activity_id,
-    ])
-  );
+  
+  let query = `SELECT * FROM Activity WHERE activity_id=${req.body.activity_id}`;
+  
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.send(result);
+    }
+  });
 });
 
 // get activity by athlete id
 app.post("/getActivityByAthleteId", async (req, res) => {
-  res.send(
-    await db.querydb("SELECT * FROM Activity WHERE athlete_id = ?", [
-      req.body.athlete_id,
-    ])
-  );
+  
+  let query = `SELECT * FROM Activity WHERE athlete_id=${req.body.athlete_id}`;
+  
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.send(result);
+    }
+  });
 });
 
 // get activities by athlete id and and date
 app.post("/getActivityByAthleteIdAndDate", async (req, res) => {
-  res.send(
-    await db.querydb(
-      "SELECT * FROM Activity WHERE athlete_id = ? AND start_time BETWEEN ? AND ?",
-      [req.body.athlete_id, req.body.start_time, req.body.end_time]
-    )
-  );
+  
+  let query = `SELECT * FROM Activity WHERE athlete_id=${req.body.athlete_id} AND start_time BETWEEN '${req.body.start_time}' AND '${req.body.end_time}'`;
+
+  console.log(query);
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.send(result);
+    }
+  });
 });
 
 module.exports = {
