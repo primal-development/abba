@@ -234,12 +234,6 @@ app.post("/createPlannedActivity", async (req, res) => {
 
 // update an activity
 app.post("/updateValue", async (req, res) => {
-  console.log("Distance: " + req.body.distance);
-  console.log("Duration: " + req.body.duration);
-  if(req.body.distance != undefined || req.body.duration != undefined){
-    req.body.avg_velocity = req.body.distance / timeToDecimal(req.body.duration);
-    console.log("Avg_velocity: " + avg_velocity);
-  }
 
   // log field
   console.log("Field: " + req.body.field);
@@ -249,6 +243,30 @@ app.post("/updateValue", async (req, res) => {
 
   // enter query params
   let query = `UPDATE ${req.body.table} SET ${req.body.field} = '${req.body.value}' WHERE ${req.body.id_type} = ${req.body.id_value}`;
+
+  console.log(query);
+    
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.sendStatus(201);
+    }
+  });
+});
+
+app.post("/updateDist", async (req, res) => {
+
+  console.log("Distance: " + req.body.distance);
+  console.log("Duration: " + req.body.duration);
+  
+  let avg_velocity = req.body.distance / timeToDecimal(req.body.duration);
+  console.log("Avg_velocity: " + avg_velocity);
+
+  // enter query params
+  let query = `UPDATE Activity SET distance = '${req.body.distance}', duration = '${req.body.duration}', avg_velocity = '${avg_velocity}' WHERE activity_id = ${req.body.activity_id}`;
 
   console.log(query);
     
