@@ -282,7 +282,7 @@ app.post("/updateDist", async (req, res) => {
 });
 
 // delete an activity
-app.post("/deleteValue", async (req, res) => {
+app.post("/deleteRow", async (req, res) => {
 
   // delete an activity
   let query = `DELETE FROM ${req.body.table} WHERE ${req.body.id_type}=${req.body.id}`;
@@ -314,38 +314,38 @@ app.post("/getPlannedActivityById", async (req, res) => {
   });
 });
 
-// get activity by athlete id
-app.post("/getPlannedActivityByAthleteId", async (req, res) => {
+// // get activity by athlete id
+// app.post("/getPlannedActivityByAthleteId", async (req, res) => {
   
-  let query = `SELECT * FROM PlannedActivity WHERE athlete_id=${req.body.athlete_id}`;
+//   let query = `SELECT * FROM PlannedActivity WHERE athlete_id=${req.body.athlete_id}`;
   
-  await db.querydb(query).then(async (result, err) => {
-    if (err) throw err;
-    if (!result) {
-      res.sendStatus(500);
-    }else{
-      console.log(result);
-      res.send(result);
-    }
-  });
-});
+//   await db.querydb(query).then(async (result, err) => {
+//     if (err) throw err;
+//     if (!result) {
+//       res.sendStatus(500);
+//     }else{
+//       console.log(result);
+//       res.send(result);
+//     }
+//   });
+// });
 
-// get activities by athlete id and and date
-app.post("/getPlannedActivityByAthleteIdAndDate", async (req, res) => {
+// // get activities by athlete id and and date
+// app.post("/getPlannedActivityByAthleteIdAndDate", async (req, res) => {
   
-  let query = `SELECT * FROM PlannedActivity WHERE athlete_id=${req.body.athlete_id} AND start_time BETWEEN '${req.body.start_time}' AND '${req.body.end_time}'`;
+//   let query = `SELECT * FROM PlannedActivity WHERE athlete_id=${req.body.athlete_id} AND start_time BETWEEN '${req.body.start_time}' AND '${req.body.end_time}'`;
 
-  console.log(query);
-  await db.querydb(query).then(async (result, err) => {
-    if (err) throw err;
-    if (!result) {
-      res.sendStatus(500);
-    }else{
-      console.log(result);
-      res.send(result);
-    }
-  });
-});
+//   console.log(query);
+//   await db.querydb(query).then(async (result, err) => {
+//     if (err) throw err;
+//     if (!result) {
+//       res.sendStatus(500);
+//     }else{
+//       console.log(result);
+//       res.send(result);
+//     }
+//   });
+// });
 
 module.exports = {
   startserver,
