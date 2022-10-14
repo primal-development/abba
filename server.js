@@ -141,54 +141,6 @@ app.post("/createActivity", async (req, res) => {
   });
 });
 
-// update an activity
-app.post("/updateActivity", async (req, res) => {
-  console.log("Distance: " + req.body.distance);
-  console.log("Duration: " + req.body.duration);
-  if(req.body.distance != undefined || req.body.duration != undefined){
-    req.body.avg_velocity = req.body.distance / timeToDecimal(req.body.duration);
-    console.log("Avg_velocity: " + avg_velocity);
-  }
-
-  // log field
-  console.log("Field: " + req.body.field);
-  console.log("Value: " + req.body.value);
-  console.log("Type: " + req.body.type);
-  console.log("id_value: " + req.body.id_value);
-
-  // enter query params
-  let query = `UPDATE ${req.body.table} SET ${req.body.field} = '${req.body.value}' WHERE ${req.body.id_type} = ${req.body.id_value}`;
-
-  console.log(query);
-    
-  await db.querydb(query).then(async (result, err) => {
-    if (err) throw err;
-    if (!result) {
-      res.sendStatus(500);
-    }else{
-      console.log(result);
-      res.sendStatus(201);
-    }
-  });
-});
-
-// delete an activity
-app.post("/deleteActivity", async (req, res) => {
-
-  // delete an activity
-  let query = `DELETE FROM Activity WHERE activity_id=${req.body.activity_id}`;
-
-  await db.querydb(query).then(async (result, err) => {
-    if (err) throw err;
-    if (result.affectedRows == 0) {
-      res.send("No activity deleted");
-    }else{
-      console.log(result);
-      res.send("Activity deleted successfully");
-    }
-  });
-});
-
 // get activity by id
 app.post("/getActivityById", async (req, res) => {
   
@@ -225,6 +177,145 @@ app.post("/getActivityByAthleteId", async (req, res) => {
 app.post("/getActivityByAthleteIdAndDate", async (req, res) => {
   
   let query = `SELECT * FROM Activity WHERE athlete_id=${req.body.athlete_id} AND start_time BETWEEN '${req.body.start_time}' AND '${req.body.end_time}'`;
+
+  console.log(query);
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.send(result);
+    }
+  });
+});
+
+
+// planned activity functions
+
+// create a new activity
+app.post("/createPlannedActivity", async (req, res) => {
+
+  // enter query params
+  let query = `
+    INSERT INTO PlannedActivity (activity_name, activity_description, duration, activity_date, time_of_day, activity_img, sport_id, L1, L2, L3, L4, L5, core, arms, legs, agility, technique) 
+    VALUES (
+        '${req.body.activity_name}',
+        NULLIF('${req.body.activity_description}', 'undefined'),
+        '${req.body.duration}',
+        '${req.body.activity_date}',
+        '${req.body.time_of_day}',
+        NULLIF('${req.body.activity_img}', 'undefined'),
+        '${req.body.sport_id}',
+        NULLIF('${req.body.L1}', 'undefined'),
+        NULLIF('${req.body.L2}', 'undefined'),
+        NULLIF('${req.body.L3}', 'undefined'),
+        NULLIF('${req.body.L4}', 'undefined'),
+        NULLIF('${req.body.L5}', 'undefined'),
+        NULLIF('${req.body.core}', 'undefined'),
+        NULLIF('${req.body.arms}', 'undefined'),
+        NULLIF('${req.body.legs}', 'undefined'),
+        NULLIF('${req.body.agility}', 'undefined'),
+        NULLIF('${req.body.techique}', 'undefined')
+    )`;
+
+  console.log(query);
+    
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.sendStatus(201);
+    }
+  });
+});
+
+// update an activity
+app.post("/updateValue", async (req, res) => {
+  console.log("Distance: " + req.body.distance);
+  console.log("Duration: " + req.body.duration);
+  if(req.body.distance != undefined || req.body.duration != undefined){
+    req.body.avg_velocity = req.body.distance / timeToDecimal(req.body.duration);
+    console.log("Avg_velocity: " + avg_velocity);
+  }
+
+  // log field
+  console.log("Field: " + req.body.field);
+  console.log("Value: " + req.body.value);
+  console.log("Type: " + req.body.type);
+  console.log("id_value: " + req.body.id_value);
+
+  // enter query params
+  let query = `UPDATE ${req.body.table} SET ${req.body.field} = '${req.body.value}' WHERE ${req.body.id_type} = ${req.body.id_value}`;
+
+  console.log(query);
+    
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.sendStatus(201);
+    }
+  });
+});
+
+// delete an activity
+app.post("/deleteValue", async (req, res) => {
+
+  // delete an activity
+  let query = `DELETE FROM ${req.body.table} WHERE ${req.body.id_type}=${req.body.id}`;
+
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (result.affectedRows == 0) {
+      res.send("Nothing deleted");
+    }else{
+      console.log(result);
+      res.send("Deleted successfully");
+    }
+  });
+});
+
+// get activity by id
+app.post("/getPlannedActivityById", async (req, res) => {
+  
+  let query = `SELECT * FROM PlannedActivity WHERE activity_id=${req.body.activity_id}`;
+  
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.send(result);
+    }
+  });
+});
+
+// get activity by athlete id
+app.post("/getPlannedActivityByAthleteId", async (req, res) => {
+  
+  let query = `SELECT * FROM PlannedActivity WHERE athlete_id=${req.body.athlete_id}`;
+  
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.send(result);
+    }
+  });
+});
+
+// get activities by athlete id and and date
+app.post("/getPlannedActivityByAthleteIdAndDate", async (req, res) => {
+  
+  let query = `SELECT * FROM PlannedActivity WHERE athlete_id=${req.body.athlete_id} AND start_time BETWEEN '${req.body.start_time}' AND '${req.body.end_time}'`;
 
   console.log(query);
   await db.querydb(query).then(async (result, err) => {
