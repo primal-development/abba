@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
-require('dotenv').config();
-const fs = require('fs');
+require("dotenv").config();
+const fs = require("fs");
+const handlebars = require('handlebars');
 
 let transporter = nodemailer.createTransport({
   service: "gmail",
@@ -10,33 +11,50 @@ let transporter = nodemailer.createTransport({
   },
 });
 
-let html = null;
+let email_file;
 
-async function sendRegistrationMail(recipient, email_file) {
-    let mailOptions = {
-        from: "silasdemez@gmail.com",
-        to: recipient,
-        subject: "Register your training diary account",
-        html: email_file,
-      };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-          console.log(error);
-          return false; 
-        } else {
-          console.log("Email sent: " + info.response);
-          return true;
-        }
-    });
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }
 
+async function sendRegistrationMail(recipient) {
+  // console.log("Email file: ");
+  // console.log(email_file.toString());
+  let auth_code = getRandomInt(999999);
 
-async function main(){
-    fs.readFile('src/mail.html', function(err, data){
-        sendRegistrationMail('fabiansenoner2002@gmail.com', data);
-    });
-    
+  let template = handlebars.compile(email_file);
+  let data = {
+      auth_code: auth_code
+  };
+  let htmlToSend = template(data);
+  
+  let mailOptions = {
+    from: "silasdemez@gmail.com",
+    to: recipient,
+    subject: "Register your training diary account",
+    html: htmlToSend,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      sendRegistrationMail(recipient);
+    } else {
+      console.log("Email sent: " + info.response);
+      return true;
+    }
+  });
+  return auth_code;
 }
 
-main();
+async function start() {
+  fs.readFile("src/mail.html", (err, data) => {
+    if (err) console.log("error", err);
+    email_file = data.toString();
+  });
+}
+
+module.exports = {
+  sendRegistrationMail,
+  start,
+};

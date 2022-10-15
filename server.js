@@ -3,6 +3,8 @@
 const express = require("express");
 const app = express();
 const db = require("./db");
+const mail = require("./mail");
+mail.start();
 const bcrypt = require("bcryptjs");
 app.use(express.json()); //middleware to read req.body.<params>
 app.use(express.static("public"));
@@ -314,6 +316,11 @@ app.post("/getPlannedActivityById", async (req, res) => {
   });
 });
 
+app.post('/sendRegistrationMail', async (req, res) => {
+    let response = await mail.sendRegistrationMail(req.body.recipient);
+    console.log(response);
+    res.send(response);
+})
 // // get activity by athlete id
 // app.post("/getPlannedActivityByAthleteId", async (req, res) => {
   
