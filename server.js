@@ -54,7 +54,7 @@ app.post("/createUser", async (req, res) => {
         if (err) throw err;
         console.log("-------> Created new User");
         console.log(result);
-        res.sendStatus(201);
+        res.send("Created new User");
       });
     }
   });
@@ -82,10 +82,10 @@ app.post("/login", async (req, res) => {
       console.log(result[0].pass_hash);
       if (await bcrypt.compare(req.body.password, result[0].pass_hash)) {
         console.log("Right pass");
-        res.send(`${req.body.email_address} is logged in!`);
+        res.sendStatus(200)
       } else {
         console.log("Wrong pass");
-        res.send(`Wrong pass`);
+        res.sendStatus(500);
       }
     }
   });
@@ -319,7 +319,8 @@ app.post("/getPlannedActivityById", async (req, res) => {
 app.post('/sendRegistrationMail', async (req, res) => {
     let response = await mail.sendRegistrationMail(req.body.recipient);
     console.log(response);
-    res.send(response);
+    res.send(response.toString());
+    // res.sendStatus(200);
 })
 // // get activity by athlete id
 // app.post("/getPlannedActivityByAthleteId", async (req, res) => {

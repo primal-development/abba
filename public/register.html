@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="login.css" />
+    <script src="register.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="login-box">
+      <h2>Register</h2>
+      <form>
+        <div class="user-box">
+          <input type="text" name="" required="" id="athlete_name" />
+          <label>Name</label>
+        </div>
+        <div class="user-box">
+          <input type="text" name="" required="" id="lastname" />
+          <label>Lastname</label>
+        </div>
+        <div class="user-box">
+          <input type="text" name="" required="" id="email" />
+          <label>Email</label>
+        </div>
+        <div class="user-box">
+          <input type="password" name="" required="" id="password" />
+          <label>Password</label>
+        </div>
+        <a href="#" onclick="submit()" style="margin-bottom: 10px;"> Submit </a>
+        <div id="auth_box" class="auth_box" style="visibility:visible">
+        <div class="user-box">
+          <input type="text" name="" required="" id="auth_input" />
+          <label>Authentification code</label>
+        </div>
+      </div>
+        <a href="#" onclick="auth()" class="auth_box" style="visibility:visible"> Authenticate </a>
+      </form>
+    </div>
+  </body>
+</html>
