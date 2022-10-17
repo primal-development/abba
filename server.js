@@ -21,6 +21,11 @@ async function startserver() {
   });
 }
 
+function toJson(data) {
+  return JSON.stringify(data, (_, v) => typeof v === 'bigint' ? `${v}n` : v)
+      .replace(/"(-?\d+)n"/g, (_, a) => a);
+}
+
 // Dev function
 app.get("/api", async (req, res) => {
   let re = await db.querydb("SELECT * FROM Activity");
@@ -328,6 +333,21 @@ app.post('/sendResetPasswordMail', async (req, res) => {
   console.log(response);
   res.send(response.toString());
   // res.sendStatus(200);
+});
+
+app.post('/createGroup', async (req, res) => {
+    
+  let query = `INSERT INTO Groups (group_name, trainer_id) VALUES ('${req.body.group_name}', ${req.body.trainer_id})`;
+  
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.send(toJson(result));
+    }
+  });
 });
 // // get activity by athlete id
 // app.post("/getPlannedActivityByAthleteId", async (req, res) => {
