@@ -321,7 +321,14 @@ app.post('/sendRegistrationMail', async (req, res) => {
     console.log(response);
     res.send(response.toString());
     // res.sendStatus(200);
-})
+});
+
+app.post('/sendResetPasswordMail', async (req, res) => {
+  let response = await mail.sendPassResetMail(req.body.recipient);
+  console.log(response);
+  res.send(response.toString());
+  // res.sendStatus(200);
+});
 // // get activity by athlete id
 // app.post("/getPlannedActivityByAthleteId", async (req, res) => {
   
