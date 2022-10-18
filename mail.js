@@ -80,7 +80,7 @@ async function sendRegistrationMail(recipient) {
 }
 
 async function start() {
-  fs.readFile("src/mail.html", (err, data) => {
+  fs.readFile("src/confirmMail.html", (err, data) => {
     if (err) console.log("error", err);
     email_file = data.toString();
   });
