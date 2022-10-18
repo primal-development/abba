@@ -6,6 +6,7 @@ const db = require("./db");
 const mail = require("./mail");
 mail.start();
 const bcrypt = require("bcryptjs");
+let path = require('path');
 app.use(express.json()); //middleware to read req.body.<params>
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -28,9 +29,9 @@ function toJson(data) {
 
 // Dev function
 app.get("/api", async (req, res) => {
-  let re = await db.querydb("SELECT * FROM Activity");
+  let re = await db.querydb("SELECT * FROM Athlete; SELECT * FROM Groups;");
   res.send(re);
-  console.log(re);
+  console.log(re.toString());
 });
 
 //CREATE USER
@@ -350,10 +351,21 @@ app.post('/createGroup', async (req, res) => {
   });
 });
 
-app.post('/addToGroup', async (req, res) => {
+app.post('/mailAddToGroup', async (req, res) => {
+    mail.sendAcceptGroupMail("silasdemez@gmail.com", "Armin", "bosses", 1);
+});
+
+app.get('/addToGroup/:group_id/:athlete_id', async (req, res) => {
     
+  console.log("Hiellou");
+  console.log("Group Id: " + req.params.group_id);
+  console.log("Athlete Id: " + req.params.athlete_id)
+  let options = {
+    root: path.join(__dirname)
+  };
+  res.sendFile('/src/acceptGroup.html', options);
   let query = `INSERT INTO group_athlete (group_id, athlete_id) VALUES ('${req.body.group_id}', ${req.body.athlete_id})`;
-  
+  /*
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
@@ -363,6 +375,7 @@ app.post('/addToGroup', async (req, res) => {
       res.send(toJson(result));
     }
   });
+  */
 });
 
 app.post('/removeFromGroup', async (req, res) => {
@@ -378,6 +391,7 @@ app.post('/removeFromGroup', async (req, res) => {
       }
     });
 });
+
 // // get activity by athlete id
 // app.post("/getPlannedActivityByAthleteId", async (req, res) => {
   
