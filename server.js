@@ -366,7 +366,7 @@ app.post('/addToGroup', async (req, res) => {
 });
 
 app.post('/removeFromGroup', async (req, res) => {
-    let query = `DELETE FROM group_athlete WHERE athlete_id = ${req.body.athlete_id} AND group_id = ${req.body.group_id})`;
+    let query = `DELETE FROM group_athlete WHERE athlete_id = ${req.body.athlete_id} AND group_id = ${req.body.group_id}`;
     
     await db.querydb(query).then(async (result, err) => {
       if (err) throw err;
