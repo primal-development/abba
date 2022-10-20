@@ -6,7 +6,7 @@ const db = require("./db");
 const mail = require("./mail");
 mail.start();
 const bcrypt = require("bcryptjs");
-let path = require('path');
+let path = require("path");
 app.use(express.json()); //middleware to read req.body.<params>
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -23,8 +23,9 @@ async function startserver() {
 }
 
 function toJson(data) {
-  return JSON.stringify(data, (_, v) => typeof v === 'bigint' ? `${v}n` : v)
-      .replace(/"(-?\d+)n"/g, (_, a) => a);
+  return JSON.stringify(data, (_, v) =>
+    typeof v === "bigint" ? `${v}n` : v
+  ).replace(/"(-?\d+)n"/g, (_, a) => a);
 }
 
 // Dev function
@@ -88,7 +89,7 @@ app.post("/login", async (req, res) => {
       console.log(result[0].pass_hash);
       if (await bcrypt.compare(req.body.password, result[0].pass_hash)) {
         console.log("Right pass");
-        res.sendStatus(200)
+        res.sendStatus(200);
       } else {
         console.log("Wrong pass");
         res.sendStatus(500);
@@ -97,13 +98,12 @@ app.post("/login", async (req, res) => {
   });
 }); //end of app.post()
 
-
 function timeToDecimal(t) {
-  let arr = t.split(':');
-  let dec = parseInt((arr[1]/6)*10, 10);
+  let arr = t.split(":");
+  let dec = parseInt((arr[1] / 6) * 10, 10);
 
-  return parseFloat(parseInt(arr[0], 10) + '.' + (dec<10?'0':'') + dec);
-} 
+  return parseFloat(parseInt(arr[0], 10) + "." + (dec < 10 ? "0" : "") + dec);
+}
 
 // create a new activity
 app.post("/createActivity", async (req, res) => {
@@ -137,12 +137,12 @@ app.post("/createActivity", async (req, res) => {
     )`;
 
   console.log(query);
-    
+
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.sendStatus(201);
     }
@@ -151,14 +151,13 @@ app.post("/createActivity", async (req, res) => {
 
 // get activity by id
 app.post("/getActivityById", async (req, res) => {
-  
   let query = `SELECT * FROM Activity WHERE activity_id=${req.body.activity_id}`;
-  
+
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.send(result);
     }
@@ -167,14 +166,13 @@ app.post("/getActivityById", async (req, res) => {
 
 // get activity by athlete id
 app.post("/getActivityByAthleteId", async (req, res) => {
-  
   let query = `SELECT * FROM Activity WHERE athlete_id=${req.body.athlete_id}`;
-  
+
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.send(result);
     }
@@ -183,7 +181,6 @@ app.post("/getActivityByAthleteId", async (req, res) => {
 
 // get activities by athlete id and and date
 app.post("/getActivityByAthleteIdAndDate", async (req, res) => {
-  
   let query = `SELECT * FROM Activity WHERE athlete_id=${req.body.athlete_id} AND start_time BETWEEN '${req.body.start_time}' AND '${req.body.end_time}'`;
 
   console.log(query);
@@ -191,19 +188,17 @@ app.post("/getActivityByAthleteIdAndDate", async (req, res) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.send(result);
     }
   });
 });
 
-
 // planned activity functions
 
 // create a new activity
 app.post("/createPlannedActivity", async (req, res) => {
-
   // enter query params
   let query = `
     INSERT INTO PlannedActivity (activity_name, activity_description, duration, activity_date, time_of_day, activity_img, sport_id, L1, L2, L3, L4, L5, core, arms, legs, agility, technique) 
@@ -228,12 +223,12 @@ app.post("/createPlannedActivity", async (req, res) => {
     )`;
 
   console.log(query);
-    
+
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.sendStatus(201);
     }
@@ -242,7 +237,6 @@ app.post("/createPlannedActivity", async (req, res) => {
 
 // update an activity
 app.post("/updateValue", async (req, res) => {
-
   // log field
   console.log("Field: " + req.body.field);
   console.log("Value: " + req.body.value);
@@ -253,12 +247,12 @@ app.post("/updateValue", async (req, res) => {
   let query = `UPDATE ${req.body.table} SET ${req.body.field} = '${req.body.value}' WHERE ${req.body.id_type} = ${req.body.id_value}`;
 
   console.log(query);
-    
+
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.sendStatus(201);
     }
@@ -266,10 +260,9 @@ app.post("/updateValue", async (req, res) => {
 });
 
 app.post("/updateDist", async (req, res) => {
-
   console.log("Distance: " + req.body.distance);
   console.log("Duration: " + req.body.duration);
-  
+
   let avg_velocity = req.body.distance / timeToDecimal(req.body.duration);
   console.log("Avg_velocity: " + avg_velocity);
 
@@ -277,12 +270,12 @@ app.post("/updateDist", async (req, res) => {
   let query = `UPDATE Activity SET distance = '${req.body.distance}', duration = '${req.body.duration}', avg_velocity = '${avg_velocity}' WHERE activity_id = ${req.body.activity_id}`;
 
   console.log(query);
-    
+
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.sendStatus(201);
     }
@@ -291,7 +284,6 @@ app.post("/updateDist", async (req, res) => {
 
 // delete an activity
 app.post("/deleteRow", async (req, res) => {
-
   // delete an activity
   let query = `DELETE FROM ${req.body.table} WHERE ${req.body.id_type}=${req.body.id}`;
 
@@ -299,7 +291,7 @@ app.post("/deleteRow", async (req, res) => {
     if (err) throw err;
     if (result.affectedRows == 0) {
       res.send("Nothing deleted");
-    }else{
+    } else {
       console.log(result);
       res.send("Deleted successfully");
     }
@@ -308,68 +300,70 @@ app.post("/deleteRow", async (req, res) => {
 
 // get activity by id
 app.post("/getPlannedActivityById", async (req, res) => {
-  
   let query = `SELECT * FROM PlannedActivity WHERE activity_id=${req.body.activity_id}`;
-  
+
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.send(result);
     }
   });
 });
 
-app.post('/sendRegistrationMail', async (req, res) => {
-    let response = await mail.sendRegistrationMail(req.body.recipient);
-    console.log(response);
-    res.send(response.toString());
-    // res.sendStatus(200);
+app.post("/sendRegistrationMail", async (req, res) => {
+  let response = await mail.sendRegistrationMail(req.body.recipient);
+  console.log(response);
+  res.send(response.toString());
+  // res.sendStatus(200);
 });
 
-app.post('/sendResetPasswordMail', async (req, res) => {
+app.post("/sendResetPasswordMail", async (req, res) => {
   let response = await mail.sendPassResetMail(req.body.recipient);
   console.log(response);
   res.send(response.toString());
   // res.sendStatus(200);
 });
 
-app.post('/createGroup', async (req, res) => {
-    
+app.post("/createGroup", async (req, res) => {
+
   let query = `INSERT INTO Groups (group_name, trainer_id) VALUES ('${req.body.group_name}', ${req.body.trainer_id})`;
-  
+
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.send(toJson(result));
     }
   });
 });
 
-app.post('/mailAddToGroup', async (req, res) => {
-
+app.post("/mailAddToGroup", async (req, res) => {
   console.log(req.body.group_members);
-    req.body.group_members.forEach((group_member) => {
-      console.log(group_member);
-      mail.sendAcceptGroupMail(group_member.email_address, group_member.trainer_name, group_member.group_name, group_member.group_id, group_member.athlete_id);
-    })
-    
+  req.body.group_members.forEach((group_member) => {
+    console.log(group_member);
+    mail.sendAcceptGroupMail(
+      group_member.email_address,
+      group_member.trainer_name,
+      group_member.group_name,
+      group_member.group_id,
+      group_member.athlete_id
+    );
+  });
 });
 
-app.get('/addToGroup/:group_id/:athlete_id/', async (req, res) => {
-    
+app.get("/addToGroup/:group_id/:athlete_id/", async (req, res) => {
   console.log("Hiellou");
   console.log("Group Id: " + req.params.group_id);
   console.log("Athlete Id: " + req.params.athlete_id);
   let options = {
-    root: path.join(__dirname)
+    root: path.join(__dirname),
   };
-  res.sendFile('/src/acceptGroup.html', options);
+  res.sendFile("/src/acceptGroup.html", options);
   let query = `INSERT INTO group_athlete (group_id, athlete_id) VALUES ('${req.body.group_id}', ${req.body.athlete_id})`;
   /*
   await db.querydb(query).then(async (result, err) => {
@@ -384,25 +378,25 @@ app.get('/addToGroup/:group_id/:athlete_id/', async (req, res) => {
   */
 });
 
-app.post('/removeFromGroup', async (req, res) => {
-    let query = `DELETE FROM group_athlete WHERE athlete_id = ${req.body.athlete_id} AND group_id = ${req.body.group_id}`;
-    
-    await db.querydb(query).then(async (result, err) => {
-      if (err) throw err;
-      if (!result) {
-        res.sendStatus(500);
-      }else{
-        console.log(result);
-        res.send(toJson(result));
-      }
-    });
+app.post("/removeFromGroup", async (req, res) => {
+  let query = `DELETE FROM group_athlete WHERE athlete_id = ${req.body.athlete_id} AND group_id = ${req.body.group_id}`;
+
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    } else {
+      console.log(result);
+      res.send(toJson(result));
+    }
+  });
 });
 
 // // get activity by athlete id
 // app.post("/getPlannedActivityByAthleteId", async (req, res) => {
-  
+
 //   let query = `SELECT * FROM PlannedActivity WHERE athlete_id=${req.body.athlete_id}`;
-  
+
 //   await db.querydb(query).then(async (result, err) => {
 //     if (err) throw err;
 //     if (!result) {
@@ -416,7 +410,7 @@ app.post('/removeFromGroup', async (req, res) => {
 
 // // get activities by athlete id and and date
 // app.post("/getPlannedActivityByAthleteIdAndDate", async (req, res) => {
-  
+
 //   let query = `SELECT * FROM PlannedActivity WHERE athlete_id=${req.body.athlete_id} AND start_time BETWEEN '${req.body.start_time}' AND '${req.body.end_time}'`;
 
 //   console.log(query);
