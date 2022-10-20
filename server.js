@@ -352,14 +352,20 @@ app.post('/createGroup', async (req, res) => {
 });
 
 app.post('/mailAddToGroup', async (req, res) => {
-    mail.sendAcceptGroupMail("silasdemez@gmail.com", "Armin", "bosses", 1);
+
+  console.log(req.body.group_members);
+    req.body.group_members.forEach((group_member) => {
+      console.log(group_member);
+      mail.sendAcceptGroupMail(group_member.email_address, group_member.trainer_name, group_member.group_name, group_member.group_id, group_member.athlete_id);
+    })
+    
 });
 
-app.get('/addToGroup/:group_id/:athlete_id', async (req, res) => {
+app.get('/addToGroup/:group_id/:athlete_id/', async (req, res) => {
     
   console.log("Hiellou");
   console.log("Group Id: " + req.params.group_id);
-  console.log("Athlete Id: " + req.params.athlete_id)
+  console.log("Athlete Id: " + req.params.athlete_id);
   let options = {
     root: path.join(__dirname)
   };
