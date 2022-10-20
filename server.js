@@ -364,22 +364,30 @@ app.get("/addToGroup/:group_id/:athlete_id/", async (req, res) => {
     root: path.join(__dirname),
   };
   res.sendFile("/src/acceptGroup.html", options);
-  let query = `INSERT INTO group_athlete (group_id, athlete_id) VALUES ('${req.body.group_id}', ${req.body.athlete_id})`;
-  /*
+  let query = `INSERT INTO group_athlete (group_id, athlete_id) VALUES (${req.params.group_id}, ${req.params.athlete_id})`;
+  
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
     }else{
       console.log(result);
-      res.send(toJson(result));
+      // res.send(toJson(result));
     }
   });
-  */
+
 });
 
 app.post("/removeFromGroup", async (req, res) => {
-  let query = `DELETE FROM group_athlete WHERE athlete_id = ${req.body.athlete_id} AND group_id = ${req.body.group_id}`;
+
+  let query = "";
+
+  console.log(req.body.group_members);
+  req.body.group_members.forEach((group_member) => {
+    query += `DELETE FROM group_athlete WHERE athlete_id = ${group_member.athlete_id} AND group_id = ${group_member.group_id};`;
+  });
+
+  // let query = `DELETE FROM group_athlete WHERE athlete_id = ${req.body.athlete_id} AND group_id = ${req.body.group_id}`;
 
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
