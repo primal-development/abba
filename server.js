@@ -7,6 +7,7 @@ const mail = require("./mail");
 mail.start();
 const bcrypt = require("bcryptjs");
 let path = require("path");
+const { captureRejectionSymbol } = require("events");
 app.use(express.json()); //middleware to read req.body.<params>
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -220,7 +221,7 @@ app.post("/createPlannedActivity", async (req, res) => {
         NULLIF('${req.body.legs}', 'undefined'),
         NULLIF('${req.body.agility}', 'undefined'),
         NULLIF('${req.body.techique}', 'undefined')
-    )`;
+    );`;
 
   console.log(query);
 
@@ -229,8 +230,8 @@ app.post("/createPlannedActivity", async (req, res) => {
     if (!result) {
       res.sendStatus(500);
     } else {
-      console.log(result);
-      res.sendStatus(201);
+      console.log(result.insertId.toString());
+      res.send(toJson(result));
     }
   });
 });
@@ -328,7 +329,6 @@ app.post("/sendResetPasswordMail", async (req, res) => {
 });
 
 app.post("/createGroup", async (req, res) => {
-
   let query = `INSERT INTO Groups (group_name, trainer_id) VALUES ('${req.body.group_name}', ${req.body.trainer_id})`;
 
   await db.querydb(query).then(async (result, err) => {
@@ -365,21 +365,19 @@ app.get("/addToGroup/:group_id/:athlete_id/", async (req, res) => {
   };
   res.sendFile("/src/acceptGroup.html", options);
   let query = `INSERT INTO group_athlete (group_id, athlete_id) VALUES (${req.params.group_id}, ${req.params.athlete_id})`;
-  
+
   await db.querydb(query).then(async (result, err) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       // res.send(toJson(result));
     }
   });
-
 });
 
 app.post("/removeFromGroup", async (req, res) => {
-
   let query = "";
 
   console.log(req.body.group_members);
@@ -398,6 +396,71 @@ app.post("/removeFromGroup", async (req, res) => {
       res.send(toJson(result));
     }
   });
+});
+
+app.post("/assignPlannedActivity", async (req, res) => {
+  // An activity has been assigned to a grou of athletes
+
+  console.log(req.body.group);
+
+  // check if the req object is an array or not
+  //       array --> a list of users
+  //       string --> a specific group to which it gets assigned
+
+  if (Array.isArray(req.body.group)) {
+    // req is an array
+    console.log("Array");
+
+    let query1 = "";
+    console.log("Array of athletes of group:");
+    console.log(req.body.group);
+    req.body.group.forEach((athlete_id) => {
+      console.log(athlete_id);
+      query1 += `INSERT INTO athlete_plannedActivity (athlete_id, activity_id) VALUES (${athlete_id}, ${req.body.activity_id});`;
+    });
+    console.log(query1);
+
+    await db.querydb(query1).then(async (result, err) => {
+      if (err) throw err;
+      if (!result) {
+        res.sendStatus(500);
+      } else {
+        console.log(result);
+        res.send(toJson(result));
+      }
+    });
+  } else {
+    // req is a string
+    console.log("Group_Id: " + req.body.group);
+
+    let query = `SELECT * FROM group_athlete WHERE group_id = ${req.body.group}`;
+
+    await db.querydb(query).then(async (result, err) => {
+      if (err) throw err;
+      if (!result) {
+        res.sendStatus(500);
+      } else {
+        let query1 = "";
+        console.log("Array of athletes of group:");
+        console.log(result);
+        result.forEach((athlete) => {
+          console.log(athlete);
+          query1 += `INSERT INTO athlete_plannedActivity (athlete_id, activity_id) VALUES (${athlete.athlete_id}, ${req.body.activity_id});`;
+        });
+        console.log(query1);
+
+        await db.querydb(query1).then(async (result, err) => {
+          if (err) throw err;
+          if (!result) {
+            res.sendStatus(500);
+          } else {
+            console.log(result);
+            res.send(toJson(result));
+          }
+        });
+      }
+    });
+  }
 });
 
 // // get activity by athlete id
