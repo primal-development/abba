@@ -483,22 +483,26 @@ app.post("/getPlannedActivityByAthleteId", async (req, res) => {
   });
 });
 
-// // get activities by athlete id and and date
-// app.post("/getPlannedActivityByAthleteIdAndDate", async (req, res) => {
+// get activities by athlete id and and date
+app.post("/getPlannedActivityByAthleteIdAndDate", async (req, res) => {
 
-//   let query = `SELECT * FROM PlannedActivity WHERE athlete_id=${req.body.athlete_id} AND start_time BETWEEN '${req.body.start_time}' AND '${req.body.end_time}'`;
+  let query = `
+    SELECT * 
+    FROM athlete_plannedActivity
+    JOIN PlannedActivity using(activity_id)
+    WHERE athlete_id=${req.body.athlete_id} AND activity_date BETWEEN '${req.body.start_date}' AND '${req.body.end_date}'`;
 
-//   console.log(query);
-//   await db.querydb(query).then(async (result, err) => {
-//     if (err) throw err;
-//     if (!result) {
-//       res.sendStatus(500);
-//     }else{
-//       console.log(result);
-//       res.send(result);
-//     }
-//   });
-// });
+  console.log(query);
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.send(toJson(result));
+    }
+  });
+});
 
 module.exports = {
   startserver,
