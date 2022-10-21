@@ -463,21 +463,25 @@ app.post("/assignPlannedActivity", async (req, res) => {
   }
 });
 
-// // get activity by athlete id
-// app.post("/getPlannedActivityByAthleteId", async (req, res) => {
+// get activity by athlete id
+app.post("/getPlannedActivityByAthleteId", async (req, res) => {
 
-//   let query = `SELECT * FROM PlannedActivity WHERE athlete_id=${req.body.athlete_id}`;
+  let query = `
+    SELECT * 
+    FROM athlete_plannedActivity
+    JOIN PlannedActivity using(activity_id)
+    WHERE athlete_id=${req.body.athlete_id}`;
 
-//   await db.querydb(query).then(async (result, err) => {
-//     if (err) throw err;
-//     if (!result) {
-//       res.sendStatus(500);
-//     }else{
-//       console.log(result);
-//       res.send(result);
-//     }
-//   });
-// });
+  await db.querydb(query).then(async (result, err) => {
+    if (err) throw err;
+    if (!result) {
+      res.sendStatus(500);
+    }else{
+      console.log(result);
+      res.send(toJson(result));
+    }
+  });
+});
 
 // // get activities by athlete id and and date
 // app.post("/getPlannedActivityByAthleteIdAndDate", async (req, res) => {
