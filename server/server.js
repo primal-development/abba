@@ -4,6 +4,7 @@ const express = require("express");
 const app = express();
 const db = require("./db");
 const mail = require("./mail");
+const cors = require("cors");
 mail.start();
 const bcrypt = require("bcryptjs");
 let path = require("path");
@@ -13,6 +14,13 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(
+  cors({
+  origin: ["http://localhost:3000"],
+  methods: ["GET", "POST"],
+  credentials: true,
+  })
+ );
 
 const port = process.env.PORT || 3001;
 
