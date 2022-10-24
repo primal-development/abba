@@ -1,4 +1,4 @@
-let url = 'http://demez.asuscomm.com:3000'
+let url = 'http://demez.asuscomm.com:3001'
 
 function validateEmail(email){
     return String(email)

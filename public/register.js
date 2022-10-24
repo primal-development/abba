@@ -1,4 +1,4 @@
-let url = 'http://demez.asuscomm.com:3000'
+let url = 'http://demez.asuscomm.com:3001'
 let auth_code = null;
 
 function validateEmail(email){
