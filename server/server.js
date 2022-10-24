@@ -9,6 +9,12 @@ mail.start();
 const bcrypt = require("bcryptjs");
 let path = require("path");
 const { captureRejectionSymbol } = require("events");
+
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+
+
 app.use(express.json()); //middleware to read req.body.<params>
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -20,6 +26,21 @@ app.use(
   methods: ["GET", "POST"],
   credentials: true,
   })
+ );
+
+// session
+ app.use(cookieParser());
+ app.use(bodyParser.urlencoded({ extended: true }));
+ app.use (
+     session ({
+         key: "userId",
+         secret: "subscribe",
+         resave: false,
+         saveUninitialized: false,
+         cookie: {
+             expires: 60 * 60 * 24,
+         },
+     })
  );
 
 const port = process.env.PORT || 3001;
@@ -76,6 +97,14 @@ app.post("/createUser", async (req, res) => {
   });
 }); //end of app.post()
 
+
+app.get("/login", (req, res) => {
+  if (req.session.user) {
+    res.send({ loggedIn: true, user: req.session.user });
+  } else {
+    res.send({ loggedIn: false });
+  }
+});
 //LOGIN (AUTHENTICATE USER)
 app.post("/login", async (req, res) => {
   console.log("Email: " + req.body.email_address);
@@ -97,8 +126,11 @@ app.post("/login", async (req, res) => {
       //
       console.log(result[0].pass_hash);
       if (await bcrypt.compare(req.body.password, result[0].pass_hash)) {
-        console.log("Right pass");
-        res.sendStatus(200);
+        // console.log("Right pass");
+        // res.sendStatus(200);
+        req.session.user = result;
+        console.log(req.session.user);
+        res.send(result);
       } else {
         console.log("Wrong pass");
         res.sendStatus(500);
