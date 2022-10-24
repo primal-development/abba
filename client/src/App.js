@@ -1,7 +1,6 @@
 import "./App.css";
 import Axios from "axios";
 import { useState } from "react";
-import { useEffect } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
@@ -21,7 +20,7 @@ function App() {
   const [passwordReg, setPasswordReg] = useState("");
 
   const [validated, setValidated] = useState(false);
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -37,9 +36,8 @@ function App() {
       athlete_lastname: athleteLastnameReg,
       email_address: emailAddressReg,
       password: passwordReg,
-    }).then(async (response) => {
+    }).then((response) => {
       console.log(response);
-      await sleep(3000);
     });
   }
 
