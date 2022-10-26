@@ -104,7 +104,7 @@ function Register() {
           </FloatingLabel>
         </Row>
         <Button variant="primary" type="submit">
-          Submit
+          Register
         </Button>
       </Form>
     </>
