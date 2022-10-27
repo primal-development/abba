@@ -22,26 +22,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-  origin: ["http://localhost:3000"],
-  methods: ["GET", "POST"],
-  credentials: true,
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST"],
+    credentials: true,
   })
- );
+);
 
 // session
- app.use(cookieParser());
- app.use(bodyParser.urlencoded({ extended: true }));
- app.use (
-     session ({
-         key: "userId",
-         secret: "subscribe",
-         resave: false,
-         saveUninitialized: false,
-         cookie: {
-             expires: 60 * 60 * 24,
-         },
-     })
- );
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  session({
+    key: "userId",
+    secret: "subscribe",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      expires: 60 * 60 * 24,
+    },
+  })
+);
 
 const port = process.env.PORT || 3001;
 
@@ -355,6 +355,7 @@ app.post("/getPlannedActivityById", async (req, res) => {
 });
 
 app.post("/sendRegistrationMail", async (req, res) => {
+  console.log("Recipient: " + req.body.recipient)
   let response = await mail.sendRegistrationMail(req.body.recipient);
   console.log(response);
   res.send(response.toString());
@@ -516,7 +517,7 @@ app.post("/getPlannedActivityByAthleteId", async (req, res) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.send(toJson(result));
     }
@@ -537,7 +538,7 @@ app.post("/getPlannedActivityByAthleteIdAndDate", async (req, res) => {
     if (err) throw err;
     if (!result) {
       res.sendStatus(500);
-    }else{
+    } else {
       console.log(result);
       res.send(toJson(result));
     }

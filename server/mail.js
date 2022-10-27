@@ -71,7 +71,7 @@ async function sendRegistrationMail(recipient) {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log(error);
-      sendRegistrationMail(recipient);
+      return false;
     } else {
       console.log("Email sent: " + info.response);
       return true;

@@ -26,16 +26,27 @@ function Register() {
     event.preventDefault();
     setValidated(true);
 
+    sendRegistrationMail(emailAddressReg);
+    
+    // Axios.post("http://localhost:3001/createUser", {
+    //   athlete_name: athleteNameReg,
+    //   athlete_lastname: athleteLastnameReg,
+    //   email_address: emailAddressReg,
+    //   password: passwordReg,
+    // }).then((response) => {
+    //   console.log(response);
+    // });
+  }
 
-    Axios.post("http://localhost:3001/createUser", {
-      athlete_name: athleteNameReg,
-      athlete_lastname: athleteLastnameReg,
-      email_address: emailAddressReg,
-      password: passwordReg,
+  async function sendRegistrationMail(email_address){
+
+    Axios.post("http://localhost:3001/sendRegistrationMail", {
+      recipient: email_address
     }).then((response) => {
       console.log(response);
+      return response.json();
     });
-  }
+}
 
   return (
     <>
