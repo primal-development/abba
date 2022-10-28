@@ -358,7 +358,7 @@ app.post("/sendRegistrationMail", async (req, res) => {
   console.log("Recipient: " + req.body.recipient)
   let response = await mail.sendRegistrationMail(req.body.recipient);
   console.log(response);
-  res.send(response.toString());
+  res.send(JSON.stringify(response));
   // res.sendStatus(200);
 });
 
