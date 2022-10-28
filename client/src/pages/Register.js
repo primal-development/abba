@@ -1,6 +1,8 @@
 import "./Register.css";
 import Axios from "axios";
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
@@ -10,13 +12,16 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 function Register() {
+  const navigate = useNavigate();
+
   const [athleteNameReg, setAthleteNameReg] = useState("");
   const [athleteLastnameReg, setAthleteLastnameReg] = useState("");
   const [emailAddressReg, setEmailAddressReg] = useState("");
   const [passwordReg, setPasswordReg] = useState("");
 
   const [validated, setValidated] = useState(false);
-  const handleSubmit = (event) => {
+  
+  function handleSubmit(event) {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -27,15 +32,7 @@ function Register() {
     setValidated(true);
 
     sendRegistrationMail(emailAddressReg);
-    
-    // Axios.post("http://localhost:3001/createUser", {
-    //   athlete_name: athleteNameReg,
-    //   athlete_lastname: athleteLastnameReg,
-    //   email_address: emailAddressReg,
-    //   password: passwordReg,
-    // }).then((response) => {
-    //   console.log(response);
-    // });
+
   }
 
   async function sendRegistrationMail(email_address){
@@ -43,9 +40,13 @@ function Register() {
     Axios.post("http://localhost:3001/sendRegistrationMail", {
       recipient: email_address
     }).then((response) => {
+      console.log("This is the response:")
       console.log(response);
-      return response.json();
+      let auth_code = response.data;
+      navigate('/Confirm', { state: { auth_code, athleteNameReg, athleteLastnameReg, emailAddressReg, passwordReg } });
     });
+
+    
 }
 
   return (
