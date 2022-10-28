@@ -4,6 +4,7 @@ import Layout from './pages/Layout';
 import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
+import Confirm from './pages/Confirm';
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -15,6 +16,7 @@ export default function App() {
                     <Route index element={<Home/>}></Route>
                     <Route path="register" element={<Register />} />
                     <Route path="login" element={<Login />} />
+                    <Route path="confirm" element={<Confirm />} />
                 </Route>
             </Routes>
         </BrowserRouter>
