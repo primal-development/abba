@@ -1,14 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/Button';
 
-function AlertUser() {
-    return (
-        <Alert variant="danger">
-            <Alert.Heading>Ooops! Wrong authentication code</Alert.Heading>
-            <p>
-                Make sure you typed the right authentification code you got sent by email
-            </p>
-        </Alert>
-    )
+export default class AlertUser extends React.Component{
+    constructor() {
+        super();
+        this.state = {
+          show: false
+        }
+      }
+    
+      componentDidUpdate() {
+        //Only update the state when the current value is different than the incoming value
+        if(this.state.show != this.props.show) {
+          this.setState({ show: this.props.show })
+        }
+      }
+
+    handleClose=()=>{
+        this.setState({
+            show:false
+        })
+    }
+    render(){
+
+        return(
+            <div>
+                <Alert variant='danger' show={this.state.show} onClose={this.handleClose} dismissible>
+                    <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                    <p>
+                        {this.props.msg}
+                    </p>
+                </Alert>
+            </div>
+        )
+    }
 }

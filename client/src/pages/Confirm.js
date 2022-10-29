@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactCodeInput from 'react-verification-code-input';
 import Axios from 'axios';
@@ -8,7 +8,6 @@ import AlertUser from './AlertUser';
 function Confirm() {
 
     const navigate = useNavigate();
-    let show = false;
 
     const location = useLocation();
     console.log(location.state);
@@ -20,7 +19,6 @@ function Confirm() {
 
         if (location.state.auth_code.toString() !== event.toString()) {
             console.log("Wrong!");
-            show = true;
         }else {
             Axios.post("http://localhost:3001/createUser", {
                 athlete_name: location.state.athleteNameReg,
@@ -38,20 +36,12 @@ function Confirm() {
         navigate('/Register');
     }
 
-    const AlertUser = () => {
-      
-        if (show) {
-          return (
-            <AlertUser/>
-          );
-        }else return <></>;
-      }
 
     return (
         <div>
             <h2>We sent an email with a verification code to you</h2>
             <h6>Please verify your identity</h6>
-            {AlertUser}
+            {< AlertUser />}
             <ReactCodeInput onComplete={handleSubmit} />
 
             <h6 onClick={resendEmail} color={'#3590E4'} >I didn't receive an email. Send again</h6>
